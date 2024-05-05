@@ -1,6 +1,6 @@
 /*
  * Version 2.0
- * Time: 20240505 14:23:20
+ * Time: 20240505 19:33:30
  * support shortcut keys: 
  *     'p' - PAUSE
  *     't' - Tips for next
@@ -765,14 +765,8 @@ public:
     void reset_timer();
 
 private:
-/*  why doesn't it work when m_board is defined before m_timer? */
-#if 0
     Board *m_board = NULL;
     struct timeval m_timer;
-#else
-    struct timeval m_timer;
-    Board *m_board = NULL;
-#endif
 };
 
 Frame::Frame(int delay, char ch) {
@@ -783,6 +777,7 @@ Frame::Frame(int delay, char ch) {
 void Frame::start() {
     int action, result;
 
+    reset_timer();
     m_board->new_block();
     while (m_board->is_game_over() == false) {
 
@@ -812,7 +807,7 @@ void Frame::start() {
                 m_board->set_game_pause();
             }
         }
-        if (/*MOVE_NONE == action &&*/ is_timeout(m_board->delay_ms)) {
+        if (is_timeout(m_board->delay_ms)) {
             action = MOVE_DOWN;
         }
         if (m_board->is_game_pause()) {
